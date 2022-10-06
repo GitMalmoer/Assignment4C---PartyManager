@@ -75,8 +75,9 @@ namespace PartyOrganizer
             lstGuests.Items.Clear(); // make sure that every time button is clicked the list is cleared.
             ShowList();
             lblNumberGuests.Text = partyManager.GuestCounter().ToString();
-            lblTotalCost.Text = CalculateTotalCost().ToString();
-            lblTotalFees.Text = CalculateTotalFee().ToString();
+            lblTotalCost.Text = partyManager.CalculateTotalCost().ToString();
+            lblTotalFees.Text = partyManager.CalculateTotalFee().ToString();
+            lblSurplusDeficit.Text = partyManager.Revenue().ToString();
         }
 
         void ShowList()
@@ -99,19 +100,22 @@ namespace PartyOrganizer
             //If you try to compare the two, they are not the same.
             // remember that value in lbl must be string
         }
-        double CalculateTotalCost()
+
+        private void btnDelete_Click(object sender, EventArgs e)
         {
-            // txtCostPerson.Text doesnt need to be checked by tryparse because it was allready checked
-            // by method SetCostAndFee()
-            double totalCost = partyManager.GuestCounter() * double.Parse(txtCostPerson.Text);
-            return totalCost; 
-        }
-        double CalculateTotalFee()
-        {
-            double totalFee = partyManager.GuestCounter() * double.Parse(txtFeePerson.Text);
-            return totalFee;
+            // string selectedItem = lstGuests.SelectedItem.ToString();
+            //lblSurplusDeficit.Text = selectedItem;
+            //partyManager.DeleteFromArray(selectedItem);
+
+            partyManager.MoveElementsOneSteepToLeft(partyManager.SelectedItemIndex);
+            lstGuests.Items.Clear();
+            ShowList();
         }
 
-
+        private void lstGuests_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int index = lstGuests.SelectedIndex;
+            partyManager.SelectedItemIndex = index;
+        }
     }
 }

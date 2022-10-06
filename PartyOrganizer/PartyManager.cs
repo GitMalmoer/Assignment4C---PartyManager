@@ -15,7 +15,20 @@ namespace PartyOrganizer
         private string lastName;
         private string name;
         private string[] arrayOfGuests;
-
+        private int selectedItemIndex;
+        
+        
+        
+        public int SelectedItemIndex
+        {
+            get { return selectedItemIndex; }
+            
+            set
+            {
+                selectedItemIndex = value;
+            }
+        }
+        
 
         public PartyManager(int maxNumberOfGuests)
         {
@@ -34,7 +47,7 @@ namespace PartyOrganizer
         {
             for (int i = 0; i < this.maxNumberOfGuests; i++)
            {
-                if (arrayOfGuests[i] == null)
+                if (string.IsNullOrEmpty(arrayOfGuests[i]))
                 {
                     arrayOfGuests[i] = name;
                     break;
@@ -55,17 +68,41 @@ namespace PartyOrganizer
             int guestCounter = 0; // never declare this as instance int. Value needs to be 0 every time you run method.
             for(int i = 0;i<arrayOfGuests.Length;i++)
             {
-                if(arrayOfGuests[i] != null)
+                if(arrayOfGuests[i] != null && arrayOfGuests[i] != string.Empty)
                 {
                     guestCounter++;
                 }
             }
             return guestCounter;
         }
-        public void CalculateCost()
+        public double CalculateTotalCost()
         {
-            int totalCost = 0;
-            //totalCost = this.costPerPerson * arrayOfGuests
+            // txtCostPerson.Text doesnt need to be checked by tryparse because it was allready checked
+            // by method SetCostAndFee()
+            double totalCost = GuestCounter() * this.costPerPerson;
+            return totalCost;
         }
+        public double CalculateTotalFee()
+        {
+            double totalFee = GuestCounter() * this.feePerPerson;
+            return totalFee;
+        }
+        public double Revenue()
+        {
+            double revenue = 0;
+            revenue = CalculateTotalFee() - CalculateTotalCost();
+            return revenue;
+
+        }
+        public void MoveElementsOneSteepToLeft(int index) // return index from list 
+        {
+            
+            for (int i = index + 1;i< arrayOfGuests.Length; i++)
+            {
+                arrayOfGuests[i - 1] = arrayOfGuests[i];
+                arrayOfGuests[i] = String.Empty;
+            }
+        }
+
     }
 }

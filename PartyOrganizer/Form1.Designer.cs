@@ -272,6 +272,7 @@
             this.lstGuests.Name = "lstGuests";
             this.lstGuests.Size = new System.Drawing.Size(266, 424);
             this.lstGuests.TabIndex = 10;
+            this.lstGuests.SelectedIndexChanged += new System.EventHandler(this.lstGuests_SelectedIndexChanged);
             // 
             // btnChange
             // 
@@ -290,6 +291,7 @@
             this.btnDelete.TabIndex = 12;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // label10
             // 
