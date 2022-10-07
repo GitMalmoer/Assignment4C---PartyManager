@@ -11,17 +11,21 @@ namespace PartyOrganizer
         private int maxNumberOfGuests;
         private double costPerPerson = 0;
         private double feePerPerson = 0;
-        private string firstName;
-        private string lastName;
         private string name;
         private string[] arrayOfGuests;
         private int selectedItemIndex;
+
+
+        public string Name
+        {
+            get { return name;}
+
+            set { name = value; }
         
-        
-        
+        }
         public int SelectedItemIndex
         {
-            get { return selectedItemIndex; }
+            get { return selectedItemIndex;}
             
             set
             {
@@ -96,11 +100,28 @@ namespace PartyOrganizer
         }
         public void MoveElementsOneSteepToLeft(int index) // return index from list 
         {
-            
-            for (int i = index + 1;i< arrayOfGuests.Length; i++)
+            if (index > -1) // if something is selected
             {
-                arrayOfGuests[i - 1] = arrayOfGuests[i];
-                arrayOfGuests[i] = String.Empty;
+                if (index == arrayOfGuests.Length - 1) // removing just last item without need to move to left whole array
+                {// why -1? because index starts from 0 and array.Length counts from 1
+                    arrayOfGuests[index] = String.Empty;
+                }
+                else
+                {
+                    for (int i = index + 1; i < arrayOfGuests.Length; i++)
+                    {
+                            arrayOfGuests[i - 1] = arrayOfGuests[i];
+                            arrayOfGuests[i] = String.Empty;
+                    }
+                }
+            }
+        }
+
+        public void ChangeValue(int index)
+        {
+            if (index > -1)
+            {
+                arrayOfGuests[index] = this.name;
             }
         }
 

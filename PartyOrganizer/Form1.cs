@@ -14,33 +14,45 @@ namespace PartyOrganizer
             this.Text = ("Party Manager made by Marcin Junka");
             grpNewParty.Enabled = true;
             grpInviteGuest.Enabled = false; // group box invite guest must be disabled.
+            lblTotalCost.Text = String.Empty;
+            lblTotalFees.Text = String.Empty;
+            lblSurplusDeficit.Text = String.Empty;
+            lblNumberGuests.Text = String.Empty;
         }
 
         private void btnCreateList_Click(object sender, EventArgs e)
         {
-            int b;
-            bool ok = int.TryParse(txtMaxGuests.Text, out b);
-            if (ok)
+            if (CreateObjectList() && SetCostAndFee()) // checks if values given are good
             {
-                partyManager = new PartyManager(b);
-            }
-            
-            if(SetCostAndFee()) // checks if values fee and cost are good
-            {
-                grpNewParty.Enabled = false;
                 grpInviteGuest.Enabled = true;
+                lstGuests.Items.Clear();
+                int numberofguests = partyManager.getMaxNumberofGuests();
+                MessageBox.Show($"Party list for {numberofguests} guests created!");
             }
             else
             {
-                grpNewParty.Enabled = true;
                 grpInviteGuest.Enabled = false;
+                lstGuests.Items.Clear();
             }
-
-            
-
-
-
         }
+
+        private bool CreateObjectList()
+        {
+            int b;
+            bool ok = int.TryParse(txtMaxGuests.Text, out b);
+            if (ok && b > 0)
+            {
+                partyManager = new PartyManager(b);
+                return ok;
+            }
+            else
+            {
+                MessageBox.Show("Wrong number of guests");
+                return false;
+            }
+            
+        }
+
         bool SetCostAndFee()
         {
             double cost = 0;
@@ -68,12 +80,22 @@ namespace PartyOrganizer
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            SetName();
+            partyManager.AddToArray(partyManager.Name);
+            ShowList();
+            SetCalculationLabels();
+        }
+
+        private void SetName()
+        {
             string name = txtName.Text;
             string lastName = txtLastName.Text.ToUpper();
             string fullName = ($"{lastName}, {name}");
-            partyManager.AddToArray(fullName);
-            lstGuests.Items.Clear(); // make sure that every time button is clicked the list is cleared.
-            ShowList();
+            partyManager.Name = fullName;
+        }
+
+        private void SetCalculationLabels()
+        {
             lblNumberGuests.Text = partyManager.GuestCounter().ToString();
             lblTotalCost.Text = partyManager.CalculateTotalCost().ToString();
             lblTotalFees.Text = partyManager.CalculateTotalFee().ToString();
@@ -82,9 +104,10 @@ namespace PartyOrganizer
 
         void ShowList()
         {
+            lstGuests.Items.Clear();
             for (int i = 0; i < partyManager.getMaxNumberofGuests(); i++)
             {
-                if (partyManager.GetValueFromArray(i) == null) // checks if value [i] in array is null
+                if (partyManager.GetValueFromArray(i) == null || partyManager.GetValueFromArray(i) == String.Empty) // checks if value [i] in array is null
                 {
                     break;// if its null ends the loop
                 }
@@ -104,18 +127,30 @@ namespace PartyOrganizer
         private void btnDelete_Click(object sender, EventArgs e)
         {
             // string selectedItem = lstGuests.SelectedItem.ToString();
-            //lblSurplusDeficit.Text = selectedItem;
-            //partyManager.DeleteFromArray(selectedItem);
+            //partyManager.DeleteFromArray(selectedItem); this doesnt work because listbox stirng looks like: number firstname lastname
+            // the number is not in array
 
             partyManager.MoveElementsOneSteepToLeft(partyManager.SelectedItemIndex);
             lstGuests.Items.Clear();
             ShowList();
+           lstGuests.SelectedIndex = partyManager.SelectedItemIndex - 1; // selected index moves after removal -1
+            SetCalculationLabels();
         }
 
         private void lstGuests_SelectedIndexChanged(object sender, EventArgs e)
         {
             int index = lstGuests.SelectedIndex;
             partyManager.SelectedItemIndex = index;
+        }
+
+        private void btnChange_Click(object sender, EventArgs e)
+        {
+            SetName(); // pushes fullname from textboxes to instance string in PartyManager class
+            int index = lstGuests.SelectedIndex;
+            partyManager.SelectedItemIndex = index; // pushes(setter) the selected item to class int selectedItemIndex
+
+            partyManager.ChangeValue(index);
+            ShowList();
         }
     }
 }
